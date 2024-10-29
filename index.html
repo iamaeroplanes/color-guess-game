@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Color Guess Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f9;
+        }
+        h1 {
+            font-size: 2.5rem;
+            color: #333;
+        }
+        #rgb-color {
+            font-size: 1.5rem;
+            color: #444;
+        }
+        #status {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            color: #777;
+        }
+        #restart {
+            padding: 10px 20px;
+            font-size: 1rem;
+            border: none;
+            background-color: #333;
+            color: white;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        .color-block {
+            display: inline-block;
+            margin: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            padding: 50px;
+        }
+    </style>
+</head>
+<body>
+<h1>Color Guess Game</h1>
+<p id="rgb-color">RGB(255, 0, 0)</p>
+<p id="status">Start Guessing!</p>
+<div class="color-block" style="background-color: rgb(255, 0, 0);"></div>
+<div class="color-block" style="background-color: rgb(255, 255, 0);"></div>
+<div class="color-block" style="background-color: rgb(0, 255, 0);"></div>
+<div class="color-block" style="background-color: rgb(0, 255, 255);"></div>
+<div class="color-block" style="background-color: rgb(0, 0, 255);"></div>
+<div class="color-block" style="background-color: rgb(255, 0, 255);"></div>
+<br>
+<button id="restart">Restart</button>
+
+<script>
+    let correctColor; // Variable to hold the correct color
+
+    // Function to generate a random RGB color
+    function getRandomRGB() {
+        const r = Math.floor(Math.random() * 256);
+        const g = Math.floor(Math.random() * 256);
+        const b = Math.floor(Math.random() * 256);
+        return `rgb(${r}, ${g}, ${b})`;
+    }
+
+    // Function to start the game
+    function startGame() {
+        const colorBlocks = document.querySelectorAll('.color-block');
+        const rgbColorText = document.getElementById('rgb-color');
+        const statusText = document.getElementById('status');
+        const randomIndex = Math.floor(Math.random() * colorBlocks.length);
+
+        // Generate a random correct color
+        correctColor = getRandomRGB();
+
+        // Update the RGB color text in the p element
+        rgbColorText.textContent = correctColor.toUpperCase();
+
+        // Randomize the background color of all blocks, ensuring one block has the correct color
+        colorBlocks.forEach((block, index) => {
+            block.style.display = 'inline-block'; // Make sure all blocks are visible
+            if (index === randomIndex) {
+                block.style.backgroundColor = correctColor; // Assign correct color to one block
+            } else {
+                block.style.backgroundColor = getRandomRGB(); // Assign random color to the rest
+            }
+        });
+
+        // Reset status message
+        statusText.textContent = 'Start Guessing!';
+    }
+
+    // Function to handle the click event on color blocks
+    function handleColorBlockClick(event) {
+        const clickedColor = event.target.style.backgroundColor;
+        const statusText = document.getElementById('status');
+        const colorBlocks = document.querySelectorAll('.color-block');
+
+        if (clickedColor === correctColor) {
+            // Player guessed the correct color
+            statusText.textContent = 'Correct!';
+            colorBlocks.forEach(block => {
+                block.style.backgroundColor = correctColor; // Set all blocks to the correct color
+            });
+        } else {
+            // Player guessed incorrectly
+            statusText.textContent = 'Try Again!';
+            event.target.style.display = 'none'; // Hide the clicked block
+        }
+    }
+
+    // Attach event listeners to all color blocks
+    function attachClickEvents() {
+        const colorBlocks = document.querySelectorAll('.color-block');
+        colorBlocks.forEach(block => {
+            block.addEventListener('click', handleColorBlockClick);
+        });
+    }
+
+    // Start the game when the page loads
+    window.onload = function() {
+        startGame();
+        attachClickEvents(); // Attach click events after the game starts
+    };
+
+    // Restart the game when the restart button is clicked
+    document.getElementById('restart').addEventListener('click', function() {
+        startGame();
+    });
+</script>
+</body>
+</html>
